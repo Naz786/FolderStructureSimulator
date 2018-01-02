@@ -1,0 +1,33 @@
+﻿@model MiniWebProject.Models.FolderViewModel
+
+@using (Html.BeginForm("CreateFolder", "BookmarkREST", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.name, new { @class = "" })
+            @Html.TextBoxFor(m => m.name, new { @class = "validate border-bottom ", id = "name", required = "required"})
+            @Html.ValidationMessageFor(m => m.name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.parent, new { @class = "" })
+            @Html.TextBoxFor(m => m.parent, new { @class = "validate border-bottom ", id = "parent", placeholder = "Documents|Pictures" })
+            @Html.ValidationMessageFor(m => m.parent, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            <input type="submit" id="newFolder" value="Post Item" />
+        </div>
+    </div>
+    <br />
+}
+
+
+

@@ -1,0 +1,39 @@
+﻿@model MiniWebProject.Models.TextFileViewModel
+
+@using (Html.BeginForm("CreateTextFile", "BookmarkREST", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.name, new { @class = "" })
+            @Html.TextBoxFor(m => m.name, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.text, new { @class = "" })
+            @Html.TextBoxFor(m => m.text, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.text, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.parent, new { @class = "" })
+            @Html.TextBoxFor(m => m.parent, new { @class = "validate border-bottom ", placeholder = "Documents|Books|Fiction" })
+            @Html.ValidationMessageFor(m => m.parent, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            <input type="submit" id="newTextFile" value="Post Item" />
+        </div>
+    </div>
+    <br />
+}
+

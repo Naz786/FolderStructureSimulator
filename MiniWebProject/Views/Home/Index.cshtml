@@ -1,0 +1,372 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+}
+
+<link rel="stylesheet" href="~/Content/bootstrap-treeview.css">
+<script src="~/Content/bootstrap-treeview.js"></script>
+
+<link rel="stylesheet" href="~/Content/style.min.css" />
+<script src="~/Content/jstree.min.js"></script>
+
+<div id="body">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div id="accordion" role="tablist">
+        <div class="card">
+            <div class="card-header" role="tab" id="headingOne">
+                <h5 class="mb-0">
+                    <a data-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        Create a Folder
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                    @{Html.RenderPartial("CreateFolderPartial");}
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" role="tab" id="headingTwo">
+                <h5 class="mb-0">
+                    <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Create a Link
+                    </a>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+                    @{Html.RenderPartial("CreateLinkPartial");}
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" role="tab" id="headingThree">
+                <h5 class="mb-0">
+                    <a class="collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Create a Location
+                    </a>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body">
+                    @{Html.RenderPartial("CreateLocationPartial");}
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" role="tab" id="headingFour">
+                <h5 class="mb-0">
+                    <a class="collapsed" data-toggle="collapse" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Create a Text File
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour" data-parent="#accordion">
+                <div class="card-body">
+                    @{Html.RenderPartial("CreateTextFilePartial");}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="container">
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="left:0%">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form>
+                            <div class="row center-align">
+                                <div class="input-field col s12">
+                                    <input type="hidden" name="linkname" id="linkname" value=""/>
+                                </div>
+                            </div>
+
+                            <div class="row center-align">
+                                <div class="input-field col s12">
+                                    <input type="text" required="required" placeholder="URL" id="linkurl" />
+                                </div>
+                            </div>
+
+                            <div class="row center-align">
+                                <div class="input-field col s12">
+                                    <input type="hidden" name="linkparent" id="linkparent" value="">
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="say()" type="button" class="btn btn-default" data-dismiss="modal">create link</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-------------SEARCH BOX FOR TREE------------->
+    <form id="s">
+        <input type="search" id="q" />
+        <button type="submit">Search</button>
+    </form>
+
+    <script>
+        $("#jstree_demo_div").jstree({
+            "plugins": ["search"]
+        });
+        $("#s").submit(function (e) {
+            e.preventDefault();
+            $("#jstree_demo_div").jstree(true).search($("#q").val());
+        });
+    </script>
+    <!----------END OF SEARCH BOX FOR TREE------------->
+
+    <!------------------TREE------------->
+    <div id="jstree_demo_div"></div>
+    <!-----------END OF TREE------------->
+
+
+</div>
+
+<!-------------------------------JSTREE CODE--------------------------------->
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+                   type: 'GET',
+                   url: '/service/bookmarks/',
+                   dataType: "JSON",
+                   success: successFunc,
+                   error: errorFunc
+        });
+        
+        function successFunc(jsonFolders) {
+           
+            $('#jstree_demo_div').jstree({
+                'core': {
+                    "check_callback" : function (operation, node, parent, position, more) {
+                        if(operation === "copy_node" || operation === "move_node") {
+                            if(parent.id === "#") {
+                                return false; // prevent moving a child above or below the root
+                            }
+                        }
+                        return true; // allow everything else
+                    },
+                    "data": jsonFolders                    
+                },
+                "types" : {
+                    "#" : {
+                        "valid_children" : ["root"]
+                    },
+                    "root" : {
+                        "icon" : "/static/3.3.4/assets/images/tree_icon.png",
+                        "valid_children" : ["default"]
+                    },
+                    "default" : {
+                        "valid_children" : ["default","file"]
+                    },
+                    "file" : {
+                        "icon" : "glyphicon glyphicon-file",
+                        "valid_children" : []
+                    }
+                },
+                "contextmenu":{         
+                    "items": function($node) {
+                        var tree = $("#jstree_demo_div").jstree(true);
+                        return {
+                            "Create": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Create",
+                                "action": false,
+                                "submenu" :{
+                                    "create_file" : {
+                                        "seperator_before" : false,
+                                        "seperator_after" : false,
+                                        "label" : "File",
+                                        "action": false,
+                                        "submenu": {
+                                            "Link": {
+                                                "seperator_before": false,
+                                                "seperator_after": false,
+                                                "label": "link",
+                                                "action": function (obj) {
+                                                    createLink();
+                                                }
+                                            },
+                                            "Location": {
+                                                "seperator_before": false,
+                                                "seperator_after": false,
+                                                "label": "location",
+                                                "action": function (obj) {
+                                                    createLocation();
+                                                }
+                                            },
+                                            "TextFile": {
+                                                "seperator_before": false,
+                                                "seperator_after": false,
+                                                "label": "textfile",
+                                                "action": function (obj) {
+                                                    createTextFile();
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "create_folder" : {
+                                        "seperator_before" : false,
+                                        "seperator_after" : false,
+                                        "label" : "Folder",
+                                        "action": function (obj) {
+                                            $node = tree.create_node($node);
+                                            tree.edit($node);
+                                            creating();
+                                        }
+                                    }
+                                }
+                            },
+                            "Rename": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Rename",
+                                "action": function (obj) { 
+                                    tree.edit($node);
+                                    editItem($node.id);                                    
+                                }
+                            },
+                            "Delete": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Delete",
+                                "action": function (obj) { 
+                                    //alert($node.text + ' ' +  $node.id)
+                                    deleteFolder($node.id);
+                                }
+                            },
+                            "Edit": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Edit Details",
+                                "action": function (obj) {
+                                    //alert($node.text + ' ' + $node.id);
+                                    editItem($node.id);
+                                }
+                            }
+                        };
+                    }
+                },
+
+                "plugins": ["dnd", "contextmenu", "types", "unique", "search"]
+            });
+            
+            function creating() {
+                $('#jstree_demo_div').on('rename_node.jstree', function (e, data) {
+                    var folder = data.text;
+                    var parentId = data.instance.get_node(data.node.parent).id;
+                    $.ajax({
+                        type: 'GET',
+                        url: '/service/create?folder=' + folder + '&parentId=' + parentId,
+                        success: function () {
+                            //alert('Success.');
+                            location.reload();
+                        },
+                        error: function () {
+                            alert("No Change.");
+                        }
+                    });
+                });;
+            };
+
+            function deleteFolder(id) {
+                    var folderId = id;
+                    $.ajax({
+                        type: 'GET',
+                        url: '/service/delete?folderId=' + folderId,
+                        success: function () {
+                            //alert('Success.');
+                            location.reload();
+                        },
+                        error: function () {
+                            //alert("No Change.");
+                            location.reload();
+                        }
+                    });
+            };
+
+            function editItem(id) {
+                $('#jstree_demo_div').on('rename_node.jstree', function (e, data) {
+                    var newName = data.text;
+                    var itemId = id;
+                    $.ajax({
+                        type: 'GET',
+                        url: '/service/edit?newName=' + newName + '&itemId=' + itemId,
+                        success: function () {
+                            //alert('Success.');
+                            location.reload();
+                        },
+                        error: function () {
+                            alert("No Change.");
+                        }
+                    });
+                });
+            };
+
+            function createLink() {
+                $("#collapseTwo").collapse('show');
+            };
+            function createLocation() {
+                $("#collapseThree").collapse('show');
+            };
+            function createTextFile() {
+                $("#collapseFour").collapse('show');
+            };
+
+            function editItem(id) {
+                $.ajax({
+                    type: 'POST',
+                    datatype: 'JSON',
+                    url: '/bookmarkrest/edititem?Id=' + id,
+                    success: function (json) {
+                        //alert('Success.');
+                        window.location.href = json.redirectUrl;
+                    },
+                    error: function (json) {
+                        alert(json.message);
+                    }
+                });
+            };
+
+
+            $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+                console.log(data.selected);
+            });
+
+            $('button').on('click', function () {
+                $('#jstree').jstree(true).select_node('child_node_1');
+                $('#jstree').jstree('select_node', 'child_node_1');
+                $.jstree.reference('#jstree').select_node('child_node_1');
+            });
+
+            $(function () {
+                $('#jstree').on("changed.jstree", function (e, data) {
+                    console.log(data.selected);
+                });
+            });
+        };
+
+        function errorFunc() {
+            alert("Bookmark service failed for JsTree data.");
+        };
+    });
+
+</script>
+<!-------------------------------END OF JSTREE CODE--------------------------------->
+
+

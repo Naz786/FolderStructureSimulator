@@ -1,0 +1,36 @@
+﻿@model MiniWebProject.Models.LinkViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "EditLink";
+}
+
+
+@using (Html.BeginForm("EditLink", "BookmarkREST", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.name, new { @class = "" })
+            @Html.TextBoxFor(m => m.name, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.uri, new { @class = "" })
+            @Html.TextBoxFor(m => m.uri, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.uri, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            <input type="submit" id="newLink" value="Post Item" />
+        </div>
+    </div>
+    <br />
+}

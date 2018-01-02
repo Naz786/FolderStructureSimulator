@@ -1,0 +1,47 @@
+﻿@model MiniWebProject.Models.LocationViewModel
+
+@using (Html.BeginForm("CreateLocation", "BookmarkREST", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.name, new { @class = "" })
+            @Html.TextBoxFor(m => m.name, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.latitude, new { @class = "" })
+            @Html.TextBoxFor(m => m.latitude, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.latitude, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.longitude, new { @class = "" })
+            @Html.TextBoxFor(m => m.longitude, new { @class = "validate border-bottom ", required = "required" })
+            @Html.ValidationMessageFor(m => m.longitude, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            @Html.LabelFor(m => m.parent, new { @class = "" })
+            @Html.TextBoxFor(m => m.parent, new { @class = "validate border-bottom ", placeholder = "Documents|Travel" })
+            @Html.ValidationMessageFor(m => m.parent, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row center-align">
+        <div class="input-field col s12">
+            <input type="submit" id="newTextFile" value="Post Item" />
+        </div>
+    </div>
+    <br />
+}
+
